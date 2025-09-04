@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
+import * as Location from 'expo-location';
+import React, { useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function Form() {
@@ -7,49 +7,34 @@ export default function Form() {
   const [lieux, setLieux] = useState('');
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
+  useEffect(() => {
+    (async () => {
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permission refusée', "Impossible d'accéder à la localisation.");
+          return;
+        }
+        let location = await Location.getCurrentPositionAsync({});
+        setLatitude(location.coords.latitude.toString());
+        setLongitude(location.coords.longitude.toString());
+      } catch (error) {
+        console.error('Erreur localisation :', error);
+        Alert.alert('Erreur', "Impossible de récupérer la localisation.");
+      }
+    })();
+  }, []);
 
   async function handleCreate() {
-    // Validation des champs
     if (!type || !lieux || !latitude || !longitude) {
       Alert.alert('Champs requis', 'Veuillez remplir tous les champs.');
       return;
     }
-
-    const latNum = parseFloat(latitude.replace(',', '.')); // tolérer la virgule
+    const latNum = parseFloat(latitude.replace(',', '.'));
     const lonNum = parseFloat(longitude.replace(',', '.'));
-
     if (isNaN(latNum) || isNaN(lonNum)) {
       Alert.alert('Coordonnées invalides', 'Veuillez entrer des coordonnées valides.');
       return;
-    }
-
-    try {
-      const existingData = await AsyncStorage.getItem('obstacles');
-      const parsedData = existingData ? JSON.parse(existingData) : [];
-
-      const newId = parsedData.length > 0
-        ? Math.max(...parsedData.map(o => o.idObs)) + 1
-        : 1;
-
-      const newObstacle = {
-        idObs: newId,
-        typeObs: type,
-        lieux: lieux,
-        latitude: latNum,
-        longitude: lonNum,
-      };
-
-      const updatedData = [...parsedData, newObstacle];
-      await AsyncStorage.setItem('obstacles', JSON.stringify(updatedData));
-
-      Alert.alert('Succès', 'Obstacle ajouté avec succès !');
-      setType('');
-      setLieux('');
-      setLatitude('');
-      setLongitude('');
-    } catch (error) {
-      console.error("Erreur lors de l'ajout de l'obstacle :", error);
-      Alert.alert("Erreur", "Impossible d'ajouter l'obstacle.");
     }
   }
 

@@ -42,22 +42,21 @@ export default function Obstacle() {
     }
   };
 
-
-const loadData = async () => {
-  try {
-    const storedData = await AsyncStorage.getItem('obstacles');
-    if (storedData) {
-      const parsed = JSON.parse(storedData).map(obs => ({
-        ...obs,
-        latitude: obs.latitude ? Number(obs.latitude) : null,
-        longitude: obs.longitude ? Number(obs.longitude) : null,
-      }));
-      setListObs(parsed);
+  const loadData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('obstacles');
+      if (storedData) {
+        const parsed = JSON.parse(storedData).map(obs => ({
+          ...obs,
+          latitude: obs.latitude ? Number(obs.latitude) : null,
+          longitude: obs.longitude ? Number(obs.longitude) : null,
+        }));
+        setListObs(parsed);
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des données :", error);
     }
-  } catch (error) {
-    console.error("Erreur lors du chargement des données :", error);
-  }
-};
+  };
 
 
   const removeObstacle = async (idObsToRemove) => {
