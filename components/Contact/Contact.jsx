@@ -1,33 +1,32 @@
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
-//import styles from './Obstacle.style';
+import { useCallback, useState } from 'react';
 
-export default function Obstacle() {
-  const [listObs, setListObs] = useState([]);
+export default function Contact() {
+  const [listContact, setListContact] = useState([]);
 
   const data = [
-    { idObs: 1, typeObs: 'Poteau', lieux: 'Rue Lafayette' },
-    { idObs: 2, typeObs: 'Trou', lieux: 'Boulevard Haussmann' },
-    { idObs: 3, typeObs: 'Débris', lieux: 'Avenue de Clichy' },
+    { id: 1, nom: 'Jean Pierre', numero: '06 34 67 89 09' },
+    { id: 2, nom: 'Marc', numero :'06 34 67 89 09' },
+    { id: 3, nom: 'JP', numero: '06 34 67 89 09' },
   ];
 
   useFocusEffect(
     useCallback(() => {
-      setListObs(data);
+      setListContact(data);
     }, [])
   );
 
   return (
     <View style={{ backgroundColor: '#0E1125', height: '100%' }}>
-      <Text style={styles.title}>Liste des obstacles à venir</Text>
+      <Text style={styles.title}>Contacts</Text>
       <View style={styles.main}>
         <ScrollView style={styles.list}>
-          {listObs.map((obs) => (
-            <View key={obs.idObs} style={styles.elems}>
+          {listContact.map((contact) => (
+            <View key={contact.id} style={styles.elems}>
               <Image
-                source={require('../../assets/images/react-logo.png')}
+                source={require('../../assets/images/phone.png')}
                 style={styles.img}
               />
               <View style={styles.textDetail}>
@@ -39,7 +38,7 @@ export default function Obstacle() {
                     marginLeft: 12,
                   }}
                 >
-                  {obs.typeObs}
+                  {contact.nom}
                 </Text>
                 <Text
                   style={{
@@ -49,15 +48,9 @@ export default function Obstacle() {
                     marginLeft: 12,
                   }}
                 >
-                  {obs.lieux}
+                  {contact.numero}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.button}>
-                  <Image
-                    source={require('../../assets/images/close.png')}
-                    style={styles.imgBtn}
-                  />
-              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>
@@ -77,7 +70,7 @@ const styles = StyleSheet.create({
       borderRadius:10
     },
     elems: {
-      height:125,
+      height:80,
       width:'95%',
       marginLeft:"2.5%",
       marginRight:"2.5%",
