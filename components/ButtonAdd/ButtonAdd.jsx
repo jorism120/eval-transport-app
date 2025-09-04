@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 
@@ -6,7 +7,7 @@ export default function ButtonAdd() {
 
   return (
     <View style={styles.main}>
-        <TouchableOpacity style={styles.button}> 
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/add')}> 
             <Text>Ajouter un obstacle</Text>
         </TouchableOpacity>
     </View>

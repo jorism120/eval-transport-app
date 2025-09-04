@@ -4,6 +4,7 @@ import ButtonAdd from '../../components/ButtonAdd/ButtonAdd';
 import Obstacle from '../../components/Obstacle/Obstacle';
 
 export default function HomeScreen() {
+
   return (
     <SafeAreaView style={styles.container}>
       <Obstacle />

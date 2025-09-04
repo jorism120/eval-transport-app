@@ -1,13 +1,11 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import Form from '../../components/Form/Form';
+import Form from '../components/Form/Form';
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
         <Form/>
-
-
     </SafeAreaView>
   );
 }
