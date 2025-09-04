@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     main : {
       margin:10,
       paddingTop:10,
-      height:'90%',
+      height:'70%',
       backgroundColor:'#EFF2F7',
       flexDirection:'column',
       alignItems:'center',
@@ -115,14 +115,13 @@ const styles = StyleSheet.create({
     },
 
     textDetail:{
-        flexDirection:'column',
-        width:"65%"
+      flexDirection:'column',
+      width:"65%"
     },
     list: {
-        width:"100%",
-        height:"100%",
+      width:"100%",
+      height:"100%",
     },
-
     button : {
       marginRight:100,
     }

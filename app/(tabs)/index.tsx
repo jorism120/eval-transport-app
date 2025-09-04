@@ -1,11 +1,13 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
+import ButtonAdd from '../../components/ButtonAdd/ButtonAdd';
 import Obstacle from '../../components/Obstacle/Obstacle';
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Obstacle />
+      <ButtonAdd />
     </SafeAreaView>
   );
 }
