@@ -34,6 +34,15 @@ export default function Obstacle() {
     }
   };
 
+  const removeObstacle = async (idObsToRemove) => {
+    try {
+      const updatedList = listObs.filter((item) => item.idObs !== idObsToRemove);
+      setListObs(updatedList);
+      await AsyncStorage.setItem('obstacles', JSON.stringify(updatedList));
+    } catch (error) {
+      console.error("Erreur lors de la suppression :", error);
+    }
+  };
   useFocusEffect(
     useCallback(() => {
       initData().then(loadData);
@@ -73,7 +82,7 @@ export default function Obstacle() {
                   {obs.lieux}
                 </Text>
               </View>
-              <TouchableOpacity style={styles.button}>
+              <TouchableOpacity style={styles.button} onPress={() => removeObstacle(obs.idObs)}>
                   <Image
                     source={require('../../assets/images/close.png')}
                     style={styles.imgBtn}
