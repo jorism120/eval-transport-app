@@ -8,9 +8,27 @@ export default function Obstacle() {
   const [listObs, setListObs] = useState([]);
 
   const data = [
-    { idObs: 1, typeObs: 'Poteau', lieux: 'Rue Lafayette' },
-    { idObs: 2, typeObs: 'Trou', lieux: 'Boulevard Haussmann' },
-    { idObs: 3, typeObs: 'Débris', lieux: 'Avenue de Clichy' },
+    {
+      idObs: 1,
+      typeObs: 'Poteau',
+      lieux: 'Rue Lafayette',
+      latitude: 48.8753,
+      longitude: 2.3501,
+    },
+    {
+      idObs: 2,
+      typeObs: 'Trou',
+      lieux: 'Boulevard Haussmann',
+      latitude: 48.8748,
+      longitude: 2.3319,
+    },
+    {
+      idObs: 3,
+      typeObs: 'Débris',
+      lieux: 'Avenue de Clichy',
+      latitude: 48.8896,
+      longitude: 2.3266,
+    },
   ];
 
   const initData = async () => {
@@ -23,16 +41,24 @@ export default function Obstacle() {
       console.error("Erreur lors de l'initialisation des données :", error);
     }
   };
-  const loadData = async () => {
-    try {
-      const storedData = await AsyncStorage.getItem('obstacles');
-      if (storedData) {
-        setListObs(JSON.parse(storedData));
-      }
-    } catch (error) {
-      console.error("Erreur lors du chargement des données :", error);
+
+
+const loadData = async () => {
+  try {
+    const storedData = await AsyncStorage.getItem('obstacles');
+    if (storedData) {
+      const parsed = JSON.parse(storedData).map(obs => ({
+        ...obs,
+        latitude: obs.latitude ? Number(obs.latitude) : null,
+        longitude: obs.longitude ? Number(obs.longitude) : null,
+      }));
+      setListObs(parsed);
     }
-  };
+  } catch (error) {
+    console.error("Erreur lors du chargement des données :", error);
+  }
+};
+
 
   const removeObstacle = async (idObsToRemove) => {
     try {
@@ -48,6 +74,7 @@ export default function Obstacle() {
       initData().then(loadData);
     }, [])
   );
+
 
   return (
     <View style={{ backgroundColor: '#0E1125', height: '100%' }}>
@@ -80,6 +107,16 @@ export default function Obstacle() {
                   }}
                 >
                   {obs.lieux}
+                </Text>
+                                <Text
+                  style={{
+                    color: '#12182F',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    marginLeft: 12,
+                  }}
+                >
+                  Lat : {obs.latitude ?? 'N/A'} Lon : {obs.longitude ?? 'N/A'}
                 </Text>
               </View>
               <TouchableOpacity style={styles.button} onPress={() => removeObstacle(obs.idObs)}>

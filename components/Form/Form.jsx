@@ -2,15 +2,24 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-
-
 export default function Form() {
   const [type, setType] = useState('');
   const [lieux, setLieux] = useState('');
+  const [latitude, setLatitude] = useState('');
+  const [longitude, setLongitude] = useState('');
 
   async function handleCreate() {
-    if (!type || !lieux) {
+    // Validation des champs
+    if (!type || !lieux || !latitude || !longitude) {
       Alert.alert('Champs requis', 'Veuillez remplir tous les champs.');
+      return;
+    }
+
+    const latNum = parseFloat(latitude.replace(',', '.')); // tolérer la virgule
+    const lonNum = parseFloat(longitude.replace(',', '.'));
+
+    if (isNaN(latNum) || isNaN(lonNum)) {
+      Alert.alert('Coordonnées invalides', 'Veuillez entrer des coordonnées valides.');
       return;
     }
 
@@ -25,13 +34,19 @@ export default function Form() {
       const newObstacle = {
         idObs: newId,
         typeObs: type,
-        lieux: lieux
+        lieux: lieux,
+        latitude: latNum,
+        longitude: lonNum,
       };
+
       const updatedData = [...parsedData, newObstacle];
       await AsyncStorage.setItem('obstacles', JSON.stringify(updatedData));
+
       Alert.alert('Succès', 'Obstacle ajouté avec succès !');
       setType('');
       setLieux('');
+      setLatitude('');
+      setLongitude('');
     } catch (error) {
       console.error("Erreur lors de l'ajout de l'obstacle :", error);
       Alert.alert("Erreur", "Impossible d'ajouter l'obstacle.");
@@ -39,7 +54,7 @@ export default function Form() {
   }
 
   return (
-    <View style={{ backgroundColor: '#0E1125', height: '100%', marginTop:50 }}>
+    <View style={{ backgroundColor: '#0E1125', height: '100%', marginTop: 50 }}>
       <View style={styles.main}>
         <Text style={styles.title}>Création d'un obstacle</Text>
         <View style={styles.form}>
@@ -58,6 +73,24 @@ export default function Form() {
             onChangeText={setLieux}
             placeholder="Ex: Rue de Paris"
             placeholderTextColor="#ccc"
+          />
+          <Text style={styles.label}>Latitude</Text>
+          <TextInput
+            style={styles.input}
+            value={latitude}
+            onChangeText={setLatitude}
+            placeholder="Ex: 48.8566"
+            placeholderTextColor="#ccc"
+            keyboardType="numeric"
+          />
+          <Text style={styles.label}>Longitude</Text>
+          <TextInput
+            style={styles.input}
+            value={longitude}
+            onChangeText={setLongitude}
+            placeholder="Ex: 2.3522"
+            placeholderTextColor="#ccc"
+            keyboardType="numeric"
           />
         </View>
         <TouchableOpacity style={styles.btnValid} onPress={handleCreate}>
