@@ -1,31 +1,64 @@
-import { useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
+import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+
 
 export default function Form() {
   const [type, setType] = useState('');
   const [lieux, setLieux] = useState('');
 
-  function handleCreate() {
+  async function handleCreate() {
+    if (!type || !lieux) {
+      Alert.alert('Champs requis', 'Veuillez remplir tous les champs.');
+      return;
+    }
 
-    console.log("créé")
-    
+    try {
+      const existingData = await AsyncStorage.getItem('obstacles');
+      const parsedData = existingData ? JSON.parse(existingData) : [];
+
+      const newId = parsedData.length > 0
+        ? Math.max(...parsedData.map(o => o.idObs)) + 1
+        : 1;
+
+      const newObstacle = {
+        idObs: newId,
+        typeObs: type,
+        lieux: lieux
+      };
+      const updatedData = [...parsedData, newObstacle];
+      await AsyncStorage.setItem('obstacles', JSON.stringify(updatedData));
+      Alert.alert('Succès', 'Obstacle ajouté avec succès !');
+      setType('');
+      setLieux('');
+    } catch (error) {
+      console.error("Erreur lors de l'ajout de l'obstacle :", error);
+      Alert.alert("Erreur", "Impossible d'ajouter l'obstacle.");
+    }
   }
 
-
-
   return (
-    <View style={{backgroundColor:'#0E1125', height:'100%'}}>
+    <View style={{ backgroundColor: '#0E1125', height: '100%', marginTop:50 }}>
       <View style={styles.main}>
         <Text style={styles.title}>Création d'un obstacle</Text>
         <View style={styles.form}>
           <Text style={styles.label}>Type d'obstacle</Text>
-          <TextInput style={styles.input}
+          <TextInput
+            style={styles.input}
+            value={type}
             onChangeText={setType}
-          ></TextInput>
+            placeholder="Ex: Poteau"
+            placeholderTextColor="#ccc"
+          />
           <Text style={styles.label}>Lieux</Text>
-          <TextInput style={styles.input} 
-          onChangeText={setLieux}
-          ></TextInput>
+          <TextInput
+            style={styles.input}
+            value={lieux}
+            onChangeText={setLieux}
+            placeholder="Ex: Rue de Paris"
+            placeholderTextColor="#ccc"
+          />
         </View>
         <TouchableOpacity style={styles.btnValid} onPress={handleCreate}>
           <Text style={styles.text}>AJOUTER</Text>
@@ -33,7 +66,7 @@ export default function Form() {
       </View>
       <View style={styles.blocLogo}>
         <Image
-          source={ require('../../assets/images/react-logo.png') } 
+          source={require('../../assets/images/react-logo.png')}
           style={styles.img}
         />
       </View>
@@ -41,72 +74,53 @@ export default function Form() {
   );
 }
 
-
-export const styles = StyleSheet.create({
-    main : {
-      margin:10,
-      marginTop:70,
-      height:'60%',
-      backgroundColor:'#EFF2F7',
-      flexDirection:'column',
-      alignItems:'center',
-      borderRadius:10
-    },
-    text: {
-      color:"white",
-      textAlign:'center',
-      fontWeight:'semibold',
-      fontSize:18
-    },
-
-    form: {
-      padding:10,
-      width:"100%",
-      height:"100%"
-    },
-
-    label: {
-      fontWeight:'600',
-      fontSize:16,
-      color:'#12182F'
-    },
-    input: {
-      height:50,
-      backgroundColor:"white",
-      borderRadius:10,
-      marginBottom:15
-    },
-
-    btnValid: {
-      position:"relative",
-      top:-250,
-      backgroundColor:"#FF5B32",
-      height:60,
-      width:140,
-      borderRadius:40,
-      alignItems:"center",
-      justifyContent:"center"
-    },
-    title:{
-      color:'#CE5E2B',
-      fontSize:28,
-      fontWeight:'bold',
-      textAlign:'center',
-      marginTop:20,
-      marginBottom:50
-    },
-
-    blocLogo : {
-      height:150,
-      width:'100%',
-      flexDirection:'column',
-      justifyContent:'center',
-      alignItems:'center'
-    },
-
-    img: {
-      width: 90, 
-      height: 90, 
-      resizeMode: 'contain',
-    }
+const styles = StyleSheet.create({
+  main: {
+    margin: 20,
+    padding: 20,
+    backgroundColor: '#EFF2F7',
+    borderRadius: 10,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#12182F',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  form: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: '#12182F',
+    marginBottom: 5,
+  },
+  input: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 16,
+    marginBottom: 15,
+  },
+  btnValid: {
+    backgroundColor: '#0E1125',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  text: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  blocLogo: {
+    alignItems: 'center',
+    marginTop: 30,
+  },
+  img: {
+    width: 100,
+    height: 100,
+    resizeMode: 'contain',
+  },
 });

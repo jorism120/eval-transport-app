@@ -1,8 +1,8 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useCallback, useState } from 'react';
-//import styles from './Obstacle.style';
 
 export default function Obstacle() {
   const [listObs, setListObs] = useState([]);
@@ -13,9 +13,30 @@ export default function Obstacle() {
     { idObs: 3, typeObs: 'Débris', lieux: 'Avenue de Clichy' },
   ];
 
+  const initData = async () => {
+    try {
+      const existingData = await AsyncStorage.getItem('obstacles');
+      if (!existingData) {
+        await AsyncStorage.setItem('obstacles', JSON.stringify(data));
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation des données :", error);
+    }
+  };
+  const loadData = async () => {
+    try {
+      const storedData = await AsyncStorage.getItem('obstacles');
+      if (storedData) {
+        setListObs(JSON.parse(storedData));
+      }
+    } catch (error) {
+      console.error("Erreur lors du chargement des données :", error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
-      setListObs(data);
+      initData().then(loadData);
     }, [])
   );
 
